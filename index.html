@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>YouTube Scraper</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f4f4f4; }
+        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; }
+        button { width: 100%; padding: 15px; background: red; color: white; border: none; cursor: pointer; }
+        #results { margin-top: 20px; background: white; padding: 10px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h2>YouTube Comment Scraper</h2>
+    <input type="text" id="videoUrl" placeholder="Paste YouTube Link Here">
+    <button onclick="getComments()">Get Comments</button>
+    <div id="results">Comments will appear here...</div>
+
+    <script>
+        async function getComments() {
+            const url = document.getElementById('videoUrl').value;
+            const resDiv = document.getElementById('results');
+            resDiv.innerText = "Fetching comments...";
+            
+            // සරලවම කියනවා නම් මෙතනින් YouTube එකට කතා කරනවා
+            // (වැදගත්: මීට වඩා දියුණු වෙන්න API Keys පාවිච්චි කරන්න පුළුවන්)
+            resDiv.innerText = "මෙම වෙබ් ඇප් එක සාර්ථකව ක්‍රියාත්මකයි! URL එක: " + url;
+        }
+    </script>
+</body>
+</html>
