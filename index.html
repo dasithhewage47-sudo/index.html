@@ -1,30 +1,59 @@
+
 <!DOCTYPE html>
 <html>
 <head>
-    <title>YouTube Scraper</title>
+    <title>YouTube Comment Scraper</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        body { font-family: sans-serif; padding: 20px; background: #f4f4f4; }
-        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; }
-        button { width: 100%; padding: 15px; background: red; color: white; border: none; cursor: pointer; }
-        #results { margin-top: 20px; background: white; padding: 10px; border-radius: 5px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; background: #121212; color: white; max-width: 600px; margin: auto; }
+        .container { background: #1e1e1e; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #333; background: #2a2a2a; color: white; border-radius: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; background: #ff0000; color: white; border: none; cursor: pointer; font-weight: bold; border-radius: 8px; font-size: 16px; transition: 0.3s; }
+        button:hover { background: #cc0000; }
+        #results { margin-top: 20px; background: #252525; padding: 15px; border-radius: 8px; max-height: 400px; overflow-y: auto; font-size: 14px; line-height: 1.6; }
+        .comment { border-bottom: 1px solid #333; padding: 10px 0; }
+        .author { color: #3ea6ff; font-weight: bold; }
     </style>
 </head>
 <body>
-    <h2>YouTube Comment Scraper</h2>
-    <input type="text" id="videoUrl" placeholder="Paste YouTube Link Here">
-    <button onclick="getComments()">Get Comments</button>
-    <div id="results">Comments will appear here...</div>
+    <div class="container">
+        <h2>🚀 YouTube Scraper</h2>
+        <input type="password" id="apiKey" placeholder="Enter Google API Key">
+        <input type="text" id="videoUrl" placeholder="Paste YouTube Video Link">
+        <button onclick="getComments()">Get Real Comments</button>
+        <div id="results">Comments will appear here...</div>
+    </div>
 
     <script>
         async function getComments() {
+            const key = document.getElementById('apiKey').value;
             const url = document.getElementById('videoUrl').value;
             const resDiv = document.getElementById('results');
-            resDiv.innerText = "Fetching comments...";
             
-            // සරලවම කියනවා නම් මෙතනින් YouTube එකට කතා කරනවා
-            // (වැදගත්: මීට වඩා දියුණු වෙන්න API Keys පාවිච්චි කරන්න පුළුවන්)
-            resDiv.innerText = "මෙම වෙබ් ඇප් එක සාර්ථකව ක්‍රියාත්මකයි! URL එක: " + url;
+            if(!key || !url) { alert("Please fill both!"); return; }
+            
+            // වීඩියෝ ID එක හොයාගන්නා හැටි
+            const videoId = url.split('v=')[1]?.split('&')[0] || url.split('/').pop().split('?')[0];
+            resDiv.innerHTML = "<i>Fetching real comments from YouTube...</i>";
+
+            try {
+                const response = await fetch(`https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${videoId}&maxResults=20&key=${key}`);
+                const data = await response.json();
+                
+                if(data.error) { 
+                    resDiv.innerHTML = "<b style='color:red;'>Error:</b> " + data.error.message; 
+                    return; 
+                }
+                
+                let output = "";
+                data.items.forEach(item => {
+                    const c = item.snippet.topLevelComment.snippet;
+                    output += `<div class='comment'><span class='author'>@${c.authorDisplayName}</span>: ${c.textDisplay}</div>`;
+                });
+                resDiv.innerHTML = output || "No comments found for this video.";
+            } catch (e) {
+                resDiv.innerHTML = "<b style='color:red;'>Failed to connect!</b>";
+            }
         }
     </script>
 </body>
